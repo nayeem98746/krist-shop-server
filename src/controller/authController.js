@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 
 const registerController = async (req, res) => {
   try {
+ 
     const { username, email, password, userRole } = req.body
     
     if (!username || !email || !password) {
