@@ -38,22 +38,82 @@ const registerController = async (req, res) => {
 }
 
 // ---------------------------- login ----------------------
+// const loginController = async (req, res) => {
+//   const { email, password } = req.body
+
+//   const user = await User.findOne({ email })
+//   if (!user) return res.status(404).send('User not found')
+
+//   const match = await bcrypt.compare(password, user.password)
+//   if (!match) return res.status(401).send('Wrong password')
+
+//   const token = jwt.sign(
+//     { email: user.email, role: user.userRole },
+//     process.env.jwt_secret,
+//     { expiresIn: '2d' }
+//   )
+//   console.log(token)
+//   res.send({ token })
+// }
+
 const loginController = async (req, res) => {
-  const { email, password } = req.body
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email })
-  if (!user) return res.status(404).send('User not found')
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
 
-  const match = await bcrypt.compare(password, user.password)
-  if (!match) return res.status(401).send('Wrong password')
+    const user = await User.findOne({ email });
 
-  const token = jwt.sign(
-    { email: user.email, role: user.userRole },
-    process.env.jwt_secret,
-    { expiresIn: '2d' }
-  )
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
-  res.send({ token })
-}
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.userRole,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "2d",
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.userRole,
+      },
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = { registerController, loginController }
