@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const { connectDB } = require("./src/config/db");
 
+const authRoutes = require("./src/routes/auth");
 const productRoutes = require("./src/routes/productRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const addressRoutes = require("./src/routes/addressRoutes");
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
   res.send("server is running");
 });
 
+app.use("/auth", authRoutes);
 app.use(productRoutes);
 app.use(userRoutes);
 app.use(addressRoutes);

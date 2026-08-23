@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("../controllers/productController");
+const verifyToken = require("../middleware/tokenVerification");
+const checkRole = require("../middleware/middleware");
 
 router.get("/men", productController.getMen);
 router.get("/men/:id", productController.getManById);
@@ -13,8 +15,8 @@ router.get("/AllProduct", productController.getAllProducts);
 router.get("/AllProduct/category/:category", productController.getProductsByCategory);
 router.get("/AllProduct/detail/:_id", productController.getProductDetail);
 router.get("/AllProduct/single_payment/:_id", productController.getProductForPayment);
-router.post("/AllProduct/", productController.addProduct);
-router.patch("/AllProduct/:_id", productController.updateProduct);
-router.delete("/AllProduct/:_id", productController.deleteProduct);
+router.post("/AllProduct/", verifyToken, checkRole, productController.addProduct);
+router.patch("/AllProduct/:_id", verifyToken, checkRole, productController.updateProduct);
+router.delete("/AllProduct/:_id", verifyToken, checkRole, productController.deleteProduct);
 
 module.exports = router;
