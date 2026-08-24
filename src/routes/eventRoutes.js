@@ -5,7 +5,7 @@ const verifyToken = require("../middleware/tokenVerification");
 const checkRole = require("../middleware/middleware");
 
 router.get("/events/", eventController.getEvents);
-router.post("/events/", verifyToken, checkRole, eventController.createEvent);
-router.delete("/events/:_id", verifyToken, checkRole, eventController.deleteEvent);
+router.post("/events/",   checkRole, eventController.createEvent);
+router.delete("/events/:_id", checkRole, eventController.deleteEvent);
 
 module.exports = router;
